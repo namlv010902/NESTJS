@@ -71,3 +71,10 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+- Update migration: npx prisma migrate dev --name <...>
+- Create modules : nest generate module modules/moduleName == nest g mo modules/moduleName  *=> modules: name folder 
+- Create services : nest generate service modules/serviceName == nest g s modules/serviceName
+- Create controller : nest generate controller modules/serviceName == nest g co modules/controllerName
+

@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
-import { Match } from "./confirmPassword";
+import { Match } from "./confirmPassword.dto";
 
 export class RegisterDto{
     @IsNotEmpty()
@@ -12,8 +12,8 @@ export class RegisterDto{
     password: string;
     @IsNotEmpty()
     @MinLength(6)
-    @Match('password', { message: 'confirm_password must match password' })
-    confirm_password: string;
+    @Match('password', { message: 'Confirm password must match password' })
+    confirmPassword: string;
     @IsNotEmpty()
     phoneNumber: string;
     role:number

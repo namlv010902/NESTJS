@@ -1,14 +1,12 @@
 import { Controller, Post, Body, Res, HttpStatus, HttpException, Get, UseGuards, Req } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto } from './schema/auth.dto';
+import { RegisterDto, LoginDto } from './dto/auth.dto';
 import { JwtAuthGuard } from 'src/middlewares/authenticate';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService,
-
-    ) { }
+    constructor(private readonly authService: AuthService ) { }
 
     @Post('register')
     async register(@Body() userData: RegisterDto, @Res() res: Response) {

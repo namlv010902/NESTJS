@@ -21,6 +21,7 @@ async function bootstrap() {
   });
   // set global prefix
   app.setGlobalPrefix('api');
+  
   await app.listen(PORT).then(()=>console.log('Connected to port '+PORT))
   .catch(error=>console.log('Error: '+error))
 }

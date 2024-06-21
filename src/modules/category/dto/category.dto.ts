@@ -8,5 +8,4 @@ export class CategoryDto{
     desc:string;
     @IsNotEmpty()
     content:string;
-
 }

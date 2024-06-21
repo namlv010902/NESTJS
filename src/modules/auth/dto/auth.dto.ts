@@ -2,7 +2,9 @@ import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
 import { Match } from "./confirmPassword.dto";
 
 export class RegisterDto{
-    @IsNotEmpty()
+    @IsNotEmpty({
+        message: 'Name is required'
+    })
     name: string;
     @IsNotEmpty()
     @IsEmail()

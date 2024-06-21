@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { Response } from 'express';
 import { CategoryDto } from './dto/category.dto';
@@ -27,9 +27,58 @@ export class CategoryController {
     // @UseGuards(JwtAuthGuard)
     @UseGuards(new RolesGuard(Role.Admin))
     @Post("")
-    async createCategory(@Req() req:Request, @Body() data: CategoryDto, @Res() res: Response) {
+    async createCategory(@Req() req: Request, @Body() data: CategoryDto, @Res() res: Response) {
         try {
-            const result = await this.categoryService.createCategory(data,req);
+            const result = await this.categoryService.createCategory(data, req);
+            return res.status(result.statusCode).json(result);
+        } catch (error) {
+            if (error instanceof HttpException) {
+                throw error;
+            } else {
+                throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
+    @Get("/:id")
+    async getDetailCategory(@Param() params: any, @Res() res: Response) {
+        try {
+            const { id } = params
+            const result = await this.categoryService.getCategoryById(parseInt(id))
+
+            return res.status(result.statusCode).json(result);
+        } catch (error) {
+            if (error instanceof HttpException) {
+                throw error;
+            } else {
+                throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
+    @UseGuards(new RolesGuard(Role.Admin))
+    @Patch("/:id")
+    async eitCategory(@Param('id') id: string, @Body() body: CategoryDto, @Res() res: Response) {
+        try {
+            const result = await this.categoryService.editCategory(parseInt(id), body)
+
+            return res.status(result.statusCode).json(result);
+        } catch (error) {
+            if (error instanceof HttpException) {
+                throw error;
+            } else {
+                throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
+    @UseGuards(new RolesGuard(Role.Admin))
+    @Delete("/:id")
+    async deleteCategory(@Param() params: any, @Res() res: Response) {
+        try {
+            const { id } = params
+            const result = await this.categoryService.deleteCategory(parseInt(id))
+
             return res.status(result.statusCode).json(result);
         } catch (error) {
             if (error instanceof HttpException) {

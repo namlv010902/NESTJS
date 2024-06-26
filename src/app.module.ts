@@ -6,9 +6,10 @@ import { APP_PIPE } from '@nestjs/core';
 import { PostModule } from './modules/post/post.module';
 import { CategoryModule } from './modules/category/category.module';
 import { CommentModule } from './modules/comment/comment.module';
+import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
-  imports: [AuthModule, PostModule, CategoryModule, CommentModule],
+  imports: [AuthModule, PostModule, CategoryModule, CommentModule, UploadModule],
   controllers: [AppController],
   providers: [
     AppService,

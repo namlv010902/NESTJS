@@ -4,22 +4,22 @@ import { Request } from 'express';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class RefreshTokenGuard extends AuthGuard('jwt') {
     canActivate(context: ExecutionContext) {
         const request = context.switchToHttp().getRequest<Request>();
         // console.log(request);
         
-        let token = request.cookies['accessToken'];
-        if (!token) {
-            throw new UnauthorizedException('No token provided');
+        let refreshToken = request.cookies['refreshToken'];
+        if (!refreshToken) {
+            throw new UnauthorizedException('No refreshToken provided');
         }
 
         try {
-            const decoded = jwt.verify(token, 'namdeptrai');
+            const decoded = jwt.verify(refreshToken, 'namdeptrai-refresh');
             request.user = decoded;
             return true;
         } catch (err) {
-            throw new UnauthorizedException('Invalid token');
+            throw new UnauthorizedException('Invalid refreshToken');
         }
     }
 }

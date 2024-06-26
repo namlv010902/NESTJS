@@ -4,7 +4,7 @@ import { LoginDto, RegisterDto } from './dto/auth.dto';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +16,7 @@ export class AuthService {
     private async generateTokens(payload: any): Promise<{ accessToken: string, refreshToken: string }> {
         const accessToken = await this.jwtService.signAsync(payload, {
             secret: "namdeptrai",
-            expiresIn: '1d'
+            expiresIn: '1m'
         });
         const refreshToken = await this.jwtService.signAsync(payload, {
             secret: "namdeptrai-refresh",
@@ -41,7 +41,7 @@ export class AuthService {
         const { password, email } = userData;
         const emailExist = await this.findUserByEmail(email);
         if (emailExist) {
-            this.handleError(HttpStatus.BAD_REQUEST, "Register failed", {email:"Email already exists"});
+            this.handleError(HttpStatus.BAD_REQUEST, "Register failed", { email: "Email already exists" });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const data = {
@@ -64,11 +64,11 @@ export class AuthService {
         if (!isMatch) {
             this.handleError(HttpStatus.BAD_REQUEST, "Login failed!", { password: "Incorrect password!" });
         }
-        const payload = { id: user.id, email: user.email,role: user.role};
+        const payload = { id: user.id, email: user.email, role: user.role };
         const { accessToken, refreshToken } = await this.generateTokens(payload);
 
-        res.cookie('accessToken', accessToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+        res.cookie('accessToken', accessToken, { httpOnly: true, secure: true, maxAge: 60 * 1000,domain:'localhost' });
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
 
         return this.createResponse(HttpStatus.OK, "Login successful", {
             user: { ...user, password: undefined },
@@ -101,5 +101,22 @@ export class AuthService {
         res.clearCookie('accessToken');
         res.clearCookie('refreshToken');
         return this.createResponse(HttpStatus.OK, "Logout successful");
+    }
+
+    async refreshToken(req: Request, res: Response): Promise<{ data?: { accessToken: string }, statusCode: number, message?: string }> {
+        const refreshToken = req.cookies['refreshToken'];
+        console.log(refreshToken)
+        if (!refreshToken) {
+            this.handleError(HttpStatus.UNAUTHORIZED, "Refresh token is missing");
+        }
+        try {
+            const payload = await this.jwtService.verifyAsync(refreshToken, { secret: "namdeptrai-refresh" });
+            const { accessToken, refreshToken: newRefreshToken } = await this.generateTokens({ id: payload.id, email: payload.email, role: payload.role });
+            res.cookie('accessToken', accessToken, { httpOnly: true, maxAge: 60 * 1000 });
+            res.cookie('refreshToken', newRefreshToken, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+            return this.createResponse(HttpStatus.OK, "Token refreshed successfully", { accessToken });
+        } catch (error) {
+            this.handleError(HttpStatus.UNAUTHORIZED, "Invalid refresh token", error);
+        }
     }
 }

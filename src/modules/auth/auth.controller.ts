@@ -3,10 +3,11 @@ import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto, LoginDto } from './dto/auth.dto';
 import { JwtAuthGuard } from 'src/middlewares/authenticate';
+import { RefreshTokenGuard } from 'src/middlewares/checkRefreshToken';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService ) { }
+    constructor(private readonly authService: AuthService) { }
 
     @Post('register')
     async register(@Body() userData: RegisterDto, @Res() res: Response) {
@@ -47,5 +48,19 @@ export class AuthController {
     logout(@Req() req: Request, @Res() res: Response) {
         const result = this.authService.logout(req, res);
         return res.status(result.statusCode).json(result);
+    }
+    @UseGuards(RefreshTokenGuard)
+    @Post('refreshToken')
+    async refreshToken(@Req () req: Request, @Res() res: Response) {
+        try {
+            const result = await this.authService.refreshToken(req, res);
+            return res.status(result.statusCode).json(result);
+        } catch (error) {
+            if (error instanceof HttpException) {
+                throw error;
+            } else {
+                throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 }

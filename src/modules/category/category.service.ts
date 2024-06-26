@@ -1,26 +1,32 @@
-import { Body, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CategoryDto } from './dto/category.dto';
-import { CategoryResponse } from './interfaces/category';
+import { CategoryKeyValueResponse, CategoryResponse } from './interfaces/category.interface';
+import { CategoryRepository } from './category.repository';
 
 @Injectable()
 export class CategoryService {
-    constructor(private prismaService: PrismaService) { }
+    constructor(private readonly categoryRepository: CategoryRepository) { }
 
-    async getCategories(): Promise<{ data: CategoryDto[], statusCode: number, message: string }> {
-        const data = await this.prismaService.category.findMany()
+    async getCategories(): Promise<CategoryKeyValueResponse> {
+        const data = await this.categoryRepository.findMany()
+        const categories = data.map((category: any) => {
+            return {
+                label: category.name,
+                value: category.id
+            }
+        }
+
+        )
         return {
-            data: data,
+            data: categories,
             statusCode: HttpStatus.OK,
             message: "Categories fetched successfully"
         }
     }
 
-    async createCategory(body: CategoryDto, req: any): Promise<CategoryResponse> {
-        const data = await this.prismaService.category.create({
-            data: body
-        })
-        console.log(req.user);
+    async createCategory(body: CategoryDto): Promise<CategoryResponse> {
+        const data = await this.categoryRepository.create(body);
         return {
             data: data,
             statusCode: HttpStatus.OK,
@@ -28,10 +34,8 @@ export class CategoryService {
         }
     }
 
-    async getCategoryById(id: number): Promise<{ data?: CategoryDto, statusCode: number, message: string }> {
-        const data = await this.prismaService.category.findUnique({
-            where: { id },
-        });
+    async getCategoryById(id: number): Promise<CategoryResponse> {
+        const data = await this.categoryRepository.findUnique(id);
         if (!data) {
             return {
                 statusCode: HttpStatus.NOT_FOUND,
@@ -41,21 +45,21 @@ export class CategoryService {
         return {
             data: data,
             statusCode: HttpStatus.OK,
-            message: "Category created successfully"
+            message: "Fetch category successfully"
         }
     }
 
-    async editCategory(id: number, body: CategoryDto): Promise<{ data?: CategoryDto, statusCode: number, message: string }> {
-        const data = await this.prismaService.category.update({
-            where: { id },
-            data: body
-        });
-        if (!data) {
+    async editCategory(id: number, body: CategoryDto): Promise<CategoryResponse> {
+
+        const existId = await this.categoryRepository.findUnique(id)
+        if (!existId) {
             return {
                 statusCode: HttpStatus.NOT_FOUND,
-                message: "Fetch category failed"
+                message: "Category not found!",
             }
         }
+        const data = await this.categoryRepository.update(id, body)
+
         return {
             data: data,
             statusCode: HttpStatus.OK,
@@ -63,10 +67,8 @@ export class CategoryService {
         }
     }
 
-    async deleteCategory(id: number): Promise<{ data?: CategoryDto, statusCode: number, message: string }> {
-        const data = await this.prismaService.category.delete({
-            where: { id }
-        });
+    async deleteCategory(id: number): Promise<CategoryResponse> {
+        const data = await this.categoryRepository.delete(id)
         if (!data) {
             return {
                 statusCode: HttpStatus.NOT_FOUND,

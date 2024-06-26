@@ -9,7 +9,12 @@ import { CommentModule } from './modules/comment/comment.module';
 import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
-  imports: [AuthModule, PostModule, CategoryModule, CommentModule, UploadModule],
+  imports: [
+    AuthModule,
+    PostModule,
+    CategoryModule,
+    CommentModule,
+    UploadModule],
   controllers: [AppController],
   providers: [
     AppService,

@@ -19,6 +19,9 @@ export class RefreshTokenGuard extends AuthGuard('jwt') {
             request.user = decoded;
             return true;
         } catch (err) {
+            if(err.name == "TokenExpiredError"){
+                throw new UnauthorizedException('Refresh token has expired');
+            }
             throw new UnauthorizedException('Invalid refreshToken');
         }
     }

@@ -67,8 +67,8 @@ export class AuthService {
         const payload = { id: user.id, email: user.email, role: user.role };
         const { accessToken, refreshToken } = await this.generateTokens(payload);
 
-        res.cookie('accessToken', accessToken, { httpOnly: true, secure: true, maxAge: 60 * 1000,domain:'localhost' });
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+        res.cookie('accessToken', accessToken, { httpOnly: true, secure: true,  });
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, });
 
         return this.createResponse(HttpStatus.OK, "Login successful", {
             user: { ...user, password: undefined },
@@ -112,8 +112,8 @@ export class AuthService {
         try {
             const payload = await this.jwtService.verifyAsync(refreshToken, { secret: "namdeptrai-refresh" });
             const { accessToken, refreshToken: newRefreshToken } = await this.generateTokens({ id: payload.id, email: payload.email, role: payload.role });
-            res.cookie('accessToken', accessToken, { httpOnly: true, maxAge: 60 * 1000 });
-            res.cookie('refreshToken', newRefreshToken, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+            res.cookie('accessToken', accessToken, { httpOnly: true,secure: true });
+            res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: true });
             return this.createResponse(HttpStatus.OK, "Token refreshed successfully", { accessToken });
         } catch (error) {
             this.handleError(HttpStatus.UNAUTHORIZED, "Invalid refresh token", error);

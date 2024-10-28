@@ -1,15 +1,14 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty } from 'class-validator';
 
-export class CategoryDto{
-    id:number;
+export class CategoryDto {
+  id: number;
 
-    @IsNotEmpty()
-    name:string
+  @IsNotEmpty()
+  name: string;
 
-    @IsNotEmpty()
-    desc:string;
+  @IsNotEmpty()
+  desc: string;
 
-    @IsNotEmpty()
-    content:string;
-
+  @IsNotEmpty()
+  content: string;
 }

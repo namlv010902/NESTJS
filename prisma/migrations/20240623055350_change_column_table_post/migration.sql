@@ -6,5 +6,5 @@
 
 */
 -- AlterTable
-ALTER TABLE `post` DROP COLUMN `summary`,
-    ADD COLUMN `image` VARCHAR(191) NOT NULL;
+-- ALTER TABLE `post` DROP COLUMN `summary`,
+--     ADD COLUMN `image` VARCHAR(191) NOT NULL;

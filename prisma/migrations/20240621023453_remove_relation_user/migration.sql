@@ -5,7 +5,7 @@
 
 */
 -- DropForeignKey
-ALTER TABLE `post` DROP FOREIGN KEY `Post_ownerId_fkey`;
+-- ALTER TABLE `post` DROP FOREIGN KEY `Post_ownerId_fkey`;
 
--- AlterTable
-ALTER TABLE `post` DROP COLUMN `ownerId`;
+-- -- AlterTable
+-- ALTER TABLE `post` DROP COLUMN `ownerId`;

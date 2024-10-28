@@ -14,13 +14,15 @@ import { UploadModule } from './modules/upload/upload.module';
     PostModule,
     CategoryModule,
     CommentModule,
-    UploadModule],
+    UploadModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
     {
       provide: APP_PIPE,
       useClass: ValidationPipe,
-    }],
+    },
+  ],
 })
-export class AppModule { }
+export class AppModule {}

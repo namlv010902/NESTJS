@@ -16,7 +16,6 @@ export class CategoryRepository {
   }
 
   async create(data: CategoryDto): Promise<Category> {
-    
     return this.prisma.category.create({ data });
   }
 

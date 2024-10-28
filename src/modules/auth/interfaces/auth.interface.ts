@@ -1,7 +1,7 @@
-import { RegisterDto } from "../dto/auth.dto";
+import { RegisterDto } from '../dto/auth.dto';
 
 export interface RegisterResponse {
-    data: RegisterDto; 
-    statusCode: number; 
-    message: string; 
+  data: RegisterDto;
+  statusCode: number;
+  message: string;
 }
